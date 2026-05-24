@@ -27,6 +27,7 @@ typedef struct HTnode_ { // Huffman tree node
 int64_t* determine_frequency(FILE* fdIN);
 HTnode* sort_node_by_weight(HTnode* unsorted_nodes, int64_t unique);
 HTnode* init_huff_tree(int64_t* buffer,int64_t unique);
+HTnode* parse_huffman_tree(HTnode* leafs);
 
 
 #endif //__HUFF_H_

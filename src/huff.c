@@ -88,5 +88,10 @@ HTnode* init_huff_tree(int64_t* buffer, int64_t unique) {
         free(buffer);
     }
     // return nodes;
+    return leaf_nodes;
+}
+ 
+HTnode* parse_huffman_tree(HTnode* leafs){
+
 }
 
