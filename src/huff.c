@@ -1,4 +1,5 @@
 #include "huff.h"
+#include <iso646.h>
 #include <stdint.h>
 
 HTnode* sort_node_by_weight(HTnode* unsort_nodes, int64_t unique) {
@@ -8,10 +9,10 @@ HTnode* sort_node_by_weight(HTnode* unsort_nodes, int64_t unique) {
     // bubble sort :)))))
     for (int64_t i = 0; i < unique - 1; i++) {
         for (int64_t j = 0; j < unique - 1 - i; j++) {
-            if (buff[j].weight > buff[j+1].weight){
+            if (buff[j].weight > buff[j + 1].weight) {
                 tmp = buff[j];
-                buff[j] = buff[j+1];
-                buff[j+1] = tmp;
+                buff[j] = buff[j + 1];
+                buff[j + 1] = tmp;
             }
         }
     }
@@ -77,21 +78,80 @@ HTnode* init_huff_tree(int64_t* buffer, int64_t unique) {
         }
     }
 
-
-    HTnode* leaf_nodes = (HTnode*)calloc(unique, sizeof(HTnode));
+    HTnode* leaf_nodes = (HTnode*)calloc((2 * unique) - 1, sizeof(HTnode));
     if (!leaf_nodes)
         return NULL;
 
     leaf_nodes = sort_node_by_weight(nodes, unique);
-    if(leaf_nodes){
+    if (leaf_nodes) {
         free(nodes);
         free(buffer);
     }
     // return nodes;
-    return leaf_nodes;
-}
- 
-HTnode* parse_huffman_tree(HTnode* leafs){
-
+    parse_huffman_tree(leaf_nodes, unique);
+    // return leaf_nodes;
 }
 
+/*
+//
+//
+//
+//    |-------------------------------------------------------------------------------------------|
+//    |least_weight1 -|- least_weight2 -|- is_leaf -|- . . . . .  -|- not_leaf \ current -| . . . |
+//    |-------------------------------------------------------------------------------------------|
+//                                                                  ^
+//                                                                  |
+//                                                                  end of unique elements here(rest
+of this is for making NOT_LEAF nodes)
+//
+//
+//
+//
+//
+//
+//
+*/
+
+HTnode* parse_huffman_tree(HTnode* leafs, int64_t unique_number) {
+    HTnode *least_weight1 = leafs, *least_weight2 = leafs + 1, *current = leafs + unique_number,
+           *not_leaf = leafs + unique_number, *is_leaf = leafs + 2;
+    for (int64_t i = 0; i < unique_number - 1; i++) {
+        current->weight = least_weight1->weight + least_weight2->weight;
+        current->left = least_weight1;
+        current->right = least_weight2;
+        current->flags = 13u; // this node is not leaf  and have leaft and right child so . . .( 0 0
+                              // 0 0 1 1 1 0 )
+        least_weight1->flags = 16u; // bit 0 (0 0 0 1 0 0 0 0)
+        least_weight2->flags = 32u; // bit 1 (0 0 1 0 0 0 0 0)
+        current++;
+
+
+        // finding least weight node 
+        if (is_leaf > leafs + unique_number) {
+            least_weight1 = not_leaf;
+            not_leaf++;
+        } else {
+            if (not_leaf->weight < is_leaf->weight) {
+                least_weight1 = not_leaf;
+                not_leaf++;
+            } else {
+                least_weight1 = is_leaf;
+                is_leaf;
+            }
+        }
+
+        // and for the seccond least wegith node repeate this for node 2
+        if (is_leaf > leafs + unique_number) {
+            least_weight2 = not_leaf;
+            not_leaf++;
+        } else {
+            if (not_leaf->weight < is_leaf->weight) {
+                least_weight2 = not_leaf;
+                not_leaf++;
+            } else {
+                least_weight2 = is_leaf;
+                is_leaf;
+            }
+        }
+    }
+}

@@ -9,6 +9,8 @@
 #define HAVE_RIGHT_CHILD    (1u << 1)  // 0 0 0 0 0 0 1 0
 #define HAVE_LEFT_CHILD     (1u << 2)  // 0 0 0 0 0 1 0 0
 #define IS_LEAF             (1u << 3)  // 0 0 0 0 1 0 0 0
+#define BIT_0               (1u << 4)  // 0 0 0 1 0 0 0 0
+#define BIT_1               (1u << 5)  // 0 0 1 0 0 0 0 0
 
 typedef struct HTnode_ { // Huffman tree node
     uint8_t symbol;       // character of the leaf node (ascII)
@@ -27,7 +29,7 @@ typedef struct HTnode_ { // Huffman tree node
 int64_t* determine_frequency(FILE* fdIN);
 HTnode* sort_node_by_weight(HTnode* unsorted_nodes, int64_t unique);
 HTnode* init_huff_tree(int64_t* buffer,int64_t unique);
-HTnode* parse_huffman_tree(HTnode* leafs);
+HTnode* parse_huffman_tree(HTnode* leafs, int64_t unique_number);
 
 
 #endif //__HUFF_H_
