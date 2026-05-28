@@ -115,6 +115,7 @@ of this is for making NOT_LEAF nodes)
 HTnode* parse_huffman_tree(HTnode* leafs, int64_t unique_number) {
     HTnode *least_weight1 = leafs, *least_weight2 = leafs + 1, *current = leafs + unique_number,
            *not_leaf = leafs + unique_number, *is_leaf = leafs + 2;
+    HTnode* i = leafs;
     for (int64_t i = 0; i < unique_number - 1; i++) {
         current->weight = least_weight1->weight + least_weight2->weight;
         current->left = least_weight1;
@@ -150,8 +151,22 @@ HTnode* parse_huffman_tree(HTnode* leafs, int64_t unique_number) {
                 not_leaf++;
             } else {
                 least_weight2 = is_leaf;
-                is_leaf;
+                is_leaf++;
             }
         }
     }
+    for(i = ((leafs + (2 *unique_number) - 1) -1 ) ; i <leafs -1; i-- ){
+        if(i->right){
+            i->right->flags |= i->flags;
+        }
+        if(i->left){
+            i->left->flags |= i->flags;
+        }
+    }
+}
+
+
+void write_file(HTnode* nodes, const char* filename){
+    FILE* out_fd = fopen(filename, "w");
+
 }
